@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+// Define a contract named 'Storage'
+contract Storage {
+    uint public value; // Declare a public state variable 'value'
+
+    // Define a function 'setValue' that takes an unsigned integer '_value' as input
+    function setValue(uint _value) public {
+        value = _value; // Set 'value' to the input '_value'
+    }
+}
+
+// Define another contract named 'Delegator'
+contract Delegator {
+    Storage public storageContract; // Declare a state variable 'storageContract' of type 'Storage'
+
+    // Define a constructor that takes an address '_storageAddress' as input
+    constructor(address _storageAddress) {
+        storageContract = Storage(_storageAddress); // Initialize 'storageContract' with the provided '_storageAddress'
+    }
+
+    // Define a function 'updateValue' that takes an unsigned integer '_newValue' as input
+    function updateValue(uint _newValue) public {
+        // Perform a delegate call to the contract at the address 'storageContract'
+        // Encode the function call 'setValue' with the input '_newValue'
+        (bool success, ) = address(storageContract).delegatecall(abi.encodeWithSignature("setValue(uint256)", _newValue));
+
+        // Require that the delegate call was successful; otherwise, revert with an error message
+        require(success, "Delegate call failed");
+    }
+}
