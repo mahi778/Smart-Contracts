@@ -1,0 +1,53 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+library ArrayUtils {
+    function bubbleSort(uint[] memory data) internal pure {
+        uint n = data.length;
+        for (uint i = 0; i < n-1; i++)
+            for (uint j = 0; j < n-i-1; j++)
+                if (data[j] > data[j+1]) {
+                    uint temp = data[j];
+                    data[j] = data[j+1];
+                    data[j+1] = temp;
+                }
+    }
+
+    function removeDuplicates(uint[] memory data) internal pure returns (uint[] memory) {
+        if (data.length <= 1) return data;
+
+        uint[] memory result = new uint[](data.length);
+        uint resultIndex = 0;
+
+        for (uint i = 0; i < data.length; i++) {
+            bool isDuplicate = false;
+            for (uint j = 0; j < resultIndex; j++) {
+                if (data[i] == result[j]) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (!isDuplicate) {
+                result[resultIndex] = data[i];
+                resultIndex++;
+            }
+        }
+
+        uint[] memory trimmedResult = new uint[](resultIndex);
+        for (uint i = 0; i < resultIndex; i++) {
+            trimmedResult[i] = result[i];
+        }
+
+        return trimmedResult;
+    }
+}
+
+contract ArrayManipulation {
+    using ArrayUtils for uint[];
+
+    function sortAndRemoveDuplicates(uint[] memory data) public pure returns (uint[] memory) {
+        data.bubbleSort();
+        return data.removeDuplicates();
+    }
+}
